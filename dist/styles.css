@@ -1,3 +1,36 @@
+.square {
+  width: 6vw;
+  height: 6vw;
+  float: left;
+  font-size: 6vw;
+  text-align: center;
+  line-height: 6vw;
+}
+.square-black {
+  width: 6vw;
+  height: 6vw;
+  float: left;
+  font-size: 6vw;
+  text-align: center;
+  line-height: 6vw;
+  background-color: #c0c0c0;
+}
+.square-black:hover {
+  background-color: #80c080;
+}
+.square-white {
+  width: 6vw;
+  height: 6vw;
+  float: left;
+  font-size: 6vw;
+  text-align: center;
+  line-height: 6vw;
+  background-color: #e0e0e0;
+}
+.square-white:hover {
+  background-color: #c0e0c0;
+}
+
 .fixed-pos {
   position: fixed;
   top: 0px;

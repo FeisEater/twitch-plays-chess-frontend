@@ -1,0 +1,28 @@
+@square-size: 6vw;
+
+.square {
+  width: @square-size;
+  height: @square-size;
+  float: left;
+  font-size: @square-size;
+  text-align: center;
+  line-height: @square-size;
+}
+
+.square-black {
+  .square;
+  background-color: rgb(192, 192, 192);
+
+  &:hover {
+    background-color: rgb(128, 192, 128);
+  }
+}
+
+.square-white {
+  .square;
+  background-color: rgb(224, 224, 224);
+
+  &:hover {
+    background-color: rgb(192, 224, 192);
+  }
+}

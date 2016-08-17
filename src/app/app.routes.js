@@ -13,6 +13,8 @@ MyApp.config(function($stateProvider, $urlRouterProvider) {
     .state("main.intro", {
       url: "intro",
       templateUrl: "templates/intro/intro.html",
+      controller: "IntroController",
+      controllerAs: "introCtrl"
     })
     .state("main.login", {
       url: "login",

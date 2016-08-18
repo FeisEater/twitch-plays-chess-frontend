@@ -1,4 +1,4 @@
-MyApp.service("ApiService", function() {
+MyApp.service("ApiService", function($http) {
 
   this.syncMethod = function() {
     return 0;
@@ -12,6 +12,17 @@ MyApp.service("ApiService", function() {
       .catch(function (err) {
         console.error("Error ApiService getThings ", err);
         return {};
+      })
+  }
+  
+  this.makeMove = function(move) {
+    return $http.post("http://localhost:3332/move", move)
+      .success(function (data, status, headers, config) {
+        console.log("Succesful move");
+        console.log(data);
+      })
+      .error(function (data, status, headers, config) {
+        console.error("Error ApiService makeMove ", data);
       })
   }
 

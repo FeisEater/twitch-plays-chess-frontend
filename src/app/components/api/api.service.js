@@ -16,7 +16,7 @@ MyApp.service("ApiService", function($http) {
   }
   
   this.makeMove = function(move) {
-    return $http.post("http://localhost:3332/move", move)
+    return $http.post("/move", move)
       .success(function (data, status, headers, config) {
         console.log("Succesful move");
         console.log(data);

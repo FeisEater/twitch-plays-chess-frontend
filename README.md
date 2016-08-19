@@ -12,6 +12,8 @@
 
 1h Communication with backend
 
+18.8
+
 3,5h Experimenting with deployment to DigitalOcean
 
 # simple angular bootstrap [![Build Status](https://travis-ci.org/TeemuKoivisto/simple-angular-bootstrap.svg?branch=master)](https://travis-ci.org/TeemuKoivisto/simple-angular-bootstrap) [![Coverage Status](https://coveralls.io/repos/github/TeemuKoivisto/simple-angular-bootstrap/badge.svg?branch=master)](https://coveralls.io/github/TeemuKoivisto/simple-angular-bootstrap?branch=master)

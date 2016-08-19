@@ -1,10 +1,10 @@
 # Hour log
 
-# 15.8
+15.8
 
 2h Setting up development environment, installing vm, cloning repository, refamiliarating with frameworks etc.
 
-# 16.8
+16.8
 
 1h Forking repositories
 
@@ -12,7 +12,7 @@
 
 1h Communication with backend
 
-# 18.8
+18.8
 
 3,5h Experimenting with deployment to DigitalOcean
 

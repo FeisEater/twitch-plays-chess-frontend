@@ -1,28 +1,48 @@
 @square-size: 6vw;
+@black: rgb(192, 192, 192);
+@white: rgb(224, 224, 224);
+@red: rgb(255, 0, 0);
+@green: rgb(0, 255, 0);
+@yellow: rgb(255, 255, 0);
 
-.square {
+.square(@baseColor, @hoverColor) {
   width: @square-size;
   height: @square-size;
   float: left;
   font-size: @square-size;
   text-align: center;
   line-height: @square-size;
+  background-color: @baseColor;
+  
+  &:hover {
+    background-color: mix(@baseColor, @hoverColor, 90%);
+  }
 }
 
 .square-black {
-  .square;
-  background-color: rgb(192, 192, 192);
-
-  &:hover {
-    background-color: rgb(128, 192, 128);
-  }
+  .square(@black, @yellow);
 }
 
 .square-white {
-  .square;
-  background-color: rgb(224, 224, 224);
+  .square(@white, @yellow);
+}
 
-  &:hover {
-    background-color: rgb(192, 224, 192);
-  }
+.square-black-valid {
+  .square(@black, @green);
+}
+
+.square-black-invalid {
+  .square(@black, @red);
+}
+
+.square-white-valid {
+  .square(@white, @green);
+}
+
+.square-white-invalid {
+  .square(@white, @red);
+}
+
+.square-selected {
+  .square(@yellow, @yellow);
 }

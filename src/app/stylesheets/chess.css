@@ -1,11 +1,3 @@
-.square {
-  width: 6vw;
-  height: 6vw;
-  float: left;
-  font-size: 6vw;
-  text-align: center;
-  line-height: 6vw;
-}
 .square-black {
   width: 6vw;
   height: 6vw;
@@ -16,7 +8,7 @@
   background-color: #c0c0c0;
 }
 .square-black:hover {
-  background-color: #80c080;
+  background-color: #c6c6ad;
 }
 .square-white {
   width: 6vw;
@@ -28,5 +20,65 @@
   background-color: #e0e0e0;
 }
 .square-white:hover {
-  background-color: #c0e0c0;
+  background-color: #e3e3ca;
+}
+.square-black-valid {
+  width: 6vw;
+  height: 6vw;
+  float: left;
+  font-size: 6vw;
+  text-align: center;
+  line-height: 6vw;
+  background-color: #c0c0c0;
+}
+.square-black-valid:hover {
+  background-color: #adc6ad;
+}
+.square-black-invalid {
+  width: 6vw;
+  height: 6vw;
+  float: left;
+  font-size: 6vw;
+  text-align: center;
+  line-height: 6vw;
+  background-color: #c0c0c0;
+}
+.square-black-invalid:hover {
+  background-color: #c6adad;
+}
+.square-white-valid {
+  width: 6vw;
+  height: 6vw;
+  float: left;
+  font-size: 6vw;
+  text-align: center;
+  line-height: 6vw;
+  background-color: #e0e0e0;
+}
+.square-white-valid:hover {
+  background-color: #cae3ca;
+}
+.square-white-invalid {
+  width: 6vw;
+  height: 6vw;
+  float: left;
+  font-size: 6vw;
+  text-align: center;
+  line-height: 6vw;
+  background-color: #e0e0e0;
+}
+.square-white-invalid:hover {
+  background-color: #e3caca;
+}
+.square-selected {
+  width: 6vw;
+  height: 6vw;
+  float: left;
+  font-size: 6vw;
+  text-align: center;
+  line-height: 6vw;
+  background-color: #ffff00;
+}
+.square-selected:hover {
+  background-color: #ffff00;
 }

@@ -4,6 +4,7 @@ MyApp.controller("IntroController", function($scope, ApiService) {
   for (var i = 0; i < 8; i++) {
     $scope.board[i] = new Array(8);
   }
+  $scope.availableMoves = [];
 
   fetchMoves();
   setInterval(fetchMoves, 1000);
@@ -64,7 +65,21 @@ MyApp.controller("IntroController", function($scope, ApiService) {
   }
 
   function fetchMoves() {
-    ApiService.updateBoard(rebuildBoard);
+    ApiService.updateBoard(handleMoves);
+  }
+  
+  function handleMoves(data) {
+    rebuildBoard(data.moves);
+    $scope.availableMoves = data.availableMoves;
+    /*for (var s = 0; s < data.availableMoves.length; s++) {
+      $scope.availableMoves[s] = {
+        start: toArrayCoordinates(data.availableMoves[s].start),
+        end: []
+      }
+      for (var e = 0; e < data.availableMoves[s].end.length; e++) {
+        $scope.availableMoves[s].end.push(toArrayCoordinates(data.availableMoves[s].end[e]));
+      }
+    }*/
   }
   
   function rebuildBoard(moves) {
@@ -94,5 +109,32 @@ MyApp.controller("IntroController", function($scope, ApiService) {
     } else {
       $scope.start = convertFormat(x, y);
     }
+  }
+  
+  $scope.chooseColor = function(x, y){
+    var result = (x % 2 == y % 2) ? "square-white" : "square-black";
+    if (!$scope.start) {
+      return result;
+    }
+    var index = -1;
+    for (var i = 0; i < $scope.availableMoves.length; i++) {
+      if ($scope.availableMoves[i].start == $scope.start) {
+        if ($scope.start == convertFormat(x, y)) {
+          return "square-selected";
+        }
+        index = i;
+        break;
+      }
+    }
+    if (index == -1) {
+      return result;
+    }
+    for (var i = 0; i < $scope.availableMoves[index].end.length; i++) {
+      var coord = toArrayCoordinates($scope.availableMoves[index].end[i]);
+      if ((x - 1) == coord.x && (y - 1) == coord.y) {
+        return result += "-valid";
+      }
+    }
+    return result += "-invalid";
   }
 });

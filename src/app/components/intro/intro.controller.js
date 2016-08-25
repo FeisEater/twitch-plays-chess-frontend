@@ -1,5 +1,7 @@
 MyApp.controller("IntroController", function($scope, ApiService) {
   $scope.start = "";
+  $scope.end = "";
+  $scope.moveOptions = [];
   $scope.board = new Array(8);
   for (var i = 0; i < 8; i++) {
     $scope.board[i] = new Array(8);
@@ -71,15 +73,6 @@ MyApp.controller("IntroController", function($scope, ApiService) {
   function handleMoves(data) {
     rebuildBoard(data.moves);
     $scope.availableMoves = data.availableMoves;
-    /*for (var s = 0; s < data.availableMoves.length; s++) {
-      $scope.availableMoves[s] = {
-        start: toArrayCoordinates(data.availableMoves[s].start),
-        end: []
-      }
-      for (var e = 0; e < data.availableMoves[s].end.length; e++) {
-        $scope.availableMoves[s].end.push(toArrayCoordinates(data.availableMoves[s].end[e]));
-      }
-    }*/
   }
   
   function rebuildBoard(moves) {
@@ -90,25 +83,174 @@ MyApp.controller("IntroController", function($scope, ApiService) {
     }
   }
 
+  function castlingLogic(move, figure) {
+    if (move.start == "e8" && move.end == "c8" && figure == "king") {
+      $scope.board[3][0] = $scope.board[0][0];
+      $scope.board[0][0] = "";
+    }
+    if (move.start == "e8" && move.end == "g8" && figure == "king") {
+      $scope.board[5][0] = $scope.board[7][0];
+      $scope.board[7][0] = "";
+    }
+    if (move.start == "e1" && move.end == "c1" && figure == "king") {
+      $scope.board[3][7] = $scope.board[0][7];
+      $scope.board[0][7] = "";
+    }
+    if (move.start == "e1" && move.end == "g1" && figure == "king") {
+      $scope.board[3][7] = $scope.board[0][7];
+      $scope.board[0][7] = "";
+    }
+    if (move.other == "castling" && move.start == "a8" && move.end == "d8" && figure == "rook") {
+      $scope.board[2][0] = $scope.board[4][0];
+      $scope.board[4][0] = "";
+    }
+    if (move.other == "castling" && move.start == "h8" && move.end == "f8" && figure == "rook") {
+      $scope.board[6][0] = $scope.board[4][0];
+      $scope.board[4][0] = "";
+    }
+    if (move.other == "castling" && move.start == "a1" && move.end == "d1" && figure == "rook") {
+      $scope.board[2][7] = $scope.board[4][7];
+      $scope.board[4][7] = "";
+    }
+    if (move.other == "castling" && move.start == "h1" && move.end == "f1" && figure == "rook") {
+      $scope.board[6][7] = $scope.board[4][7];
+      $scope.board[4][7] = "";
+    }
+  }
+  
+  function enPassantLogic(move, figure) {
+    if (figure != "\u265f" && figure != "\u2659") {
+      return;
+    }
+    var coordStart = toArrayCoordinates(move.start);
+    var coordEnd = toArrayCoordinates(move.end);
+    if (!$scope.board[coordEnd.x][coordEnd.y] &&
+        Math.abs(coordStart.x - coordEnd.x) == 1 &&
+        Math.abs(coordStart.y - coordEnd.y) == 1) {
+      $scope.board[coordEnd.x][coordStart.y] = "";
+    }
+  }
+
+  function promotionLogic(move) {
+    var coordStart = toArrayCoordinates(move.start);
+    var coordEnd = toArrayCoordinates(move.end);
+    var figure = $scope.board[coordEnd.x][coordEnd.y];
+    if (coordEnd.y == 7 && figure == "\u265f") {
+      if (move.other == "queen")  $scope.board[coordEnd.x][coordEnd.y] = "\u265b";
+      if (move.other == "knight")  $scope.board[coordEnd.x][coordEnd.y] = "\u265e";
+      if (move.other == "rook")  $scope.board[coordEnd.x][coordEnd.y] = "\u265c";
+      if (move.other == "bishop")  $scope.board[coordEnd.x][coordEnd.y] = "\u265d";
+    }
+    if (coordEnd.y == 0 && figure == "\u2659") {
+      if (move.other == "queen")  $scope.board[coordEnd.x][coordEnd.y] = "\u2655";
+      if (move.other == "knight")  $scope.board[coordEnd.x][coordEnd.y] = "\u2658";
+      if (move.other == "rook")  $scope.board[coordEnd.x][coordEnd.y] = "\u2656";
+      if (move.other == "bishop")  $scope.board[coordEnd.x][coordEnd.y] = "\u2657";
+    }
+  }
+
   function makeMove(move) {
     var coordStart = toArrayCoordinates(move.start);
     var coordEnd = toArrayCoordinates(move.end);
     var figure = $scope.board[coordStart.x][coordStart.y];
+    enPassantLogic(move, figure);
     $scope.board[coordStart.x][coordStart.y] = "";
     $scope.board[coordEnd.x][coordEnd.y] = figure;
+    var castler = "";
+    if (figure == "\u265a" || figure == "\u2654") castler = "king";
+    if (figure == "\u265c" || figure == "\u2656") castler = "rook";
+    if (castler)  castlingLogic(move, castler);
+    promotionLogic(move);
     $scope.moveNum++;
   }
 
+  function moveNeedsAdditionalInfo(endX, endY) {
+    var coordStart = toArrayCoordinates($scope.start);
+    if ((coordStart.y == 1 && endY == 0 && $scope.board[coordStart.x][coordStart.y] == "\u2659") ||
+        (coordStart.y == 6 && endY == 7 && $scope.board[coordStart.x][coordStart.y] == "\u265f")) {
+      $scope.moveOptions.push(
+        {type: "queen", title: "Promote to queen"},
+        {type: "knight", title: "Promote to knight"},
+        {type: "rook", title: "Promote to rook"},
+        {type: "bishop", title: "Promote to bishop"}
+      );
+      return true;
+    }
+    var mayCastle = "";
+    for (var i = 0; i < $scope.availableMoves.length; i++) {
+      coordStart = toArrayCoordinates($scope.availableMoves[i].start);
+      if ($scope.board[coordStart.x][coordStart.y] != "\u265a" &&
+          $scope.board[coordStart.x][coordStart.y] != "\u2654") {
+        continue;
+      }
+      for (var j = 0; j < $scope.availableMoves[i].end.length; j++) {
+        var coordEnd = toArrayCoordinates($scope.availableMoves[i].end[j]);
+        if (coordStart.x - coordEnd.x == 2) {
+          mayCastle = mayCastle ? "both" : "left";
+        }
+        if (coordEnd.x - coordStart.x == 2) {
+          mayCastle = mayCastle ? "both" : "right";
+        }
+      }
+    }
+    if (mayCastle) {
+      coordStart = toArrayCoordinates($scope.start);
+      if ($scope.board[coordStart.x][coordStart.y] == "\u265c" ||
+          $scope.board[coordStart.x][coordStart.y] == "\u2656") {
+        if (mayCastle == "left" || mayCastle == "both") {
+          if (coordStart.x == 0 && endX == 3) {
+            $scope.moveOptions.push(
+              {type: "castling", title: "Perform castling"},
+              {type: "", title: "Leave as it is"}
+            );
+            return true;
+          }
+        }
+        if (mayCastle == "right" || mayCastle == "both") {
+          if (coordStart.x == 7 && endX == 5) {
+            $scope.moveOptions.push(
+              {type: "castling", title: "Perform castling"},
+              {type: "", title: "Leave as it is"}
+            );
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+  
   $scope.clickCell = function(x, y){
+    if ($scope.end) {
+      return;
+    }
     if ($scope.start) {
-      sentMove = ApiService.makeMove({
-        start: $scope.start,
-        end: convertFormat(x, y)
-      }, makeMove);
-      $scope.start = "";
+      if (moveNeedsAdditionalInfo(x - 1, y - 1)) {
+        $scope.end = convertFormat(x, y);
+      } else {
+        ApiService.makeMove({
+          start: $scope.start,
+          end: convertFormat(x, y)
+        }, makeMove);
+        $scope.start = "";
+      }
     } else {
       $scope.start = convertFormat(x, y);
     }
+  }
+  
+  $scope.setOther = function(moveOption){
+    if (!$scope.start || !$scope.end) {
+      return;
+    }
+    ApiService.makeMove({
+      start: $scope.start,
+      end: $scope.end,
+      other: moveOption
+    }, makeMove);
+    $scope.start = "";
+    $scope.end = "";
+    $scope.moveOptions = [];
   }
   
   $scope.chooseColor = function(x, y){

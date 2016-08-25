@@ -3,33 +3,33 @@ Frontend module of the referendum based public chess app. Implemented in Angular
 
 # Hour log
 
-15.8
+## 15.8
 
-2h Setting up development environment, installing vm, cloning repository, refamiliarating with frameworks etc.
+**2h** Setting up development environment, installing vm, cloning repository, refamiliarating with frameworks etc.
 
-16.8
+## 16.8
 
-1h Forking repositories
+**1h** Forking repositories
 
-2h CSS and HTML coding to present a chessboard
+**2h** CSS and HTML coding to present a chessboard
 
-1h Communication with backend
+**1h** Communication with backend
 
-18.8
+## 18.8
 
-3,5h Experimenting with deployment to DigitalOcean
+**3,5h** Experimenting with deployment to DigitalOcean
 
-19.8
+## 19.8
 
-1h Finished deployment to DigitalOcean, set up Travis
+**1h** Finished deployment to DigitalOcean, set up Travis
 
-2,5h Implemented chess state auto-update
+**2,5h** Implemented chess state auto-update
 
-22.8
+## 22.8
 
-1,5h Front-end notifies which moves are valid. Also refined CSS.
+**1,5h** Front-end notifies which moves are valid. Also refined CSS.
 
-24.8
+## 24.8
 
-1,5h Front-end up to date with back end. Some moves ask player for additional information.
+**1,5h** Front-end up to date with back end. Some moves ask player for additional information.
 

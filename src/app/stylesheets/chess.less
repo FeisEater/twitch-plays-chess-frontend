@@ -1,5 +1,5 @@
-@square-size: 6vw;
-@font-size: 5vw;
+@square-size: 5vw;
+@font-size: 4vw;
 @black: rgb(192, 192, 192);
 @white: rgb(224, 224, 224);
 @red: rgb(255, 0, 0);
@@ -29,19 +29,19 @@
 }
 
 .square-black-valid {
-  .square(@black, @green);
+  .square(mix(@black, @green, 90%), @green);
 }
 
 .square-black-invalid {
-  .square(@black, @red);
+  .square(mix(@black, @red, 90%), @red);
 }
 
 .square-white-valid {
-  .square(@white, @green);
+  .square(mix(@white, @green, 90%), @green);
 }
 
 .square-white-invalid {
-  .square(@white, @red);
+  .square(mix(@white, @red, 90%), @red);
 }
 
 .square-selected {

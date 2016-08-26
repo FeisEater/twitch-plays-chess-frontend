@@ -1,13 +1,17 @@
 MyApp.controller("IntroController", function($scope, ApiService) {
   $scope.start = "";
   $scope.end = "";
+  $scope.showStart = "";
+  $scope.showEnd = "";
   $scope.moveOptions = [];
   $scope.board = new Array(8);
   for (var i = 0; i < 8; i++) {
     $scope.board[i] = new Array(8);
   }
   $scope.availableMoves = [];
-
+  $scope.color = (Math.random() < 0.5) ? "black" : "white";
+  $scope.voted = false;
+  
   fetchMoves();
   setInterval(fetchMoves, 1000);
   
@@ -71,8 +75,22 @@ MyApp.controller("IntroController", function($scope, ApiService) {
   }
   
   function handleMoves(data) {
+    if (data.moves.length >= $scope.moveNum) {
+      $scope.voted = false;
+      $scope.start = "";
+      $scope.end = "";
+      $scope.showStart = "";
+      $scope.showEnd = "";
+    }
     rebuildBoard(data.moves);
-    $scope.availableMoves = data.availableMoves;
+    var colorOfTurn = ($scope.moveNum % 2 == 0) ? "black" : "white";
+    if ($scope.color == colorOfTurn) {
+      $scope.availableMoves = data.availableMoves;
+    } else {
+      $scope.availableMoves = "";
+    }
+    $scope.notification = data.notification;
+    $scope.votes = data.votes;
   }
   
   function rebuildBoard(moves) {
@@ -163,6 +181,9 @@ MyApp.controller("IntroController", function($scope, ApiService) {
     promotionLogic(move);
     $scope.moveNum++;
   }
+  
+  function waitForVotes(move) {
+  }
 
   function moveNeedsAdditionalInfo(endX, endY) {
     var coordStart = toArrayCoordinates($scope.start);
@@ -220,22 +241,62 @@ MyApp.controller("IntroController", function($scope, ApiService) {
     return false;
   }
   
+  function canClickStart(x, y) {
+    if ($scope.voted) {
+      return false;
+    }
+    for (var i = 0; i < $scope.availableMoves.length; i++) {
+      var coord = toArrayCoordinates($scope.availableMoves[i].start);
+      if (coord.x == x && coord.y == y) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  function canClickEnd(x, y) {
+    if ($scope.voted) {
+      return false;
+    }
+    var startCoord = toArrayCoordinates($scope.start);
+    for (var i = 0; i < $scope.availableMoves.length; i++) {
+      var coord = toArrayCoordinates($scope.availableMoves[i].start);
+      if (coord.x == startCoord.x && coord.y == startCoord.y) {
+        for (var j = 0; j < $scope.availableMoves[i].end.length; j++) {
+          var endCoord = toArrayCoordinates($scope.availableMoves[i].end[j]);
+          if (endCoord.x == x && endCoord.y == y) {
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+    return false;
+  }
+
   $scope.clickCell = function(x, y){
     if ($scope.end) {
       return;
     }
     if ($scope.start) {
-      if (moveNeedsAdditionalInfo(x - 1, y - 1)) {
-        $scope.end = convertFormat(x, y);
-      } else {
-        ApiService.makeMove({
-          start: $scope.start,
-          end: convertFormat(x, y)
-        }, makeMove);
-        $scope.start = "";
+      if (canClickEnd(x - 1, y - 1)) {
+        if (moveNeedsAdditionalInfo(x - 1, y - 1)) {
+          $scope.end = convertFormat(x, y);
+        } else {
+          ApiService.makeMove({
+            start: $scope.start,
+            end: convertFormat(x, y)
+          }, waitForVotes);
+          $scope.voted = true;
+          $scope.end = convertFormat(x, y);
+          $scope.showStart = $scope.start;
+          $scope.showEnd = $scope.end;
+        }
       }
     } else {
-      $scope.start = convertFormat(x, y);
+      if (canClickStart(x - 1, y - 1)) {
+        $scope.start = convertFormat(x, y);
+      }
     }
   }
   
@@ -247,23 +308,24 @@ MyApp.controller("IntroController", function($scope, ApiService) {
       start: $scope.start,
       end: $scope.end,
       other: moveOption
-    }, makeMove);
-    $scope.start = "";
-    $scope.end = "";
+    }, waitForVotes);
     $scope.moveOptions = [];
+    $scope.voted = true;
+    $scope.showStart = $scope.start;
+    $scope.showEnd = $scope.end;
   }
   
   $scope.chooseColor = function(x, y){
     var result = (x % 2 == y % 2) ? "square-white" : "square-black";
-    if (!$scope.start) {
+    if ($scope.showStart == convertFormat(x, y) || $scope.showEnd == convertFormat(x, y)) {
+      return "square-selected";
+    }
+    if (!$scope.start || $scope.voted) {
       return result;
     }
     var index = -1;
     for (var i = 0; i < $scope.availableMoves.length; i++) {
       if ($scope.availableMoves[i].start == $scope.start) {
-        if ($scope.start == convertFormat(x, y)) {
-          return "square-selected";
-        }
         index = i;
         break;
       }
@@ -278,5 +340,37 @@ MyApp.controller("IntroController", function($scope, ApiService) {
       }
     }
     return result += "-invalid";
+  }
+  
+  $scope.turnMessage = function(){
+    var colorOfTurn = ($scope.moveNum % 2 == 0) ? "black" : "white";
+    if (colorOfTurn == $scope.color) {
+      return "Your turn.";
+    }
+    return "Opponent's turn.";
+  }
+  
+  $scope.notateMove = function(vote){
+    if (vote.other) {
+      return vote.start + "-" + vote.end + ": " + vote.other;
+    }
+    return vote.start + "-" + vote.end;
+  }
+  
+  $scope.showMove = function(move){
+    $scope.showStart = move.start;
+    $scope.showEnd = move.end;
+  }
+  
+  $scope.showYourMove = function(){
+    $scope.showStart = $scope.start;
+    $scope.showEnd = $scope.end;
+  }
+  
+  $scope.voteHighlighter = function(move){
+    if (move.start == $scope.start && move.end == $scope.end) {
+      return "yourVote";
+    }
+    return "highlight";
   }
 });

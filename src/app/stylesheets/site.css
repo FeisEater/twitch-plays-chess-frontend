@@ -1,0 +1,21 @@
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+td,
+th {
+  border: 1px solid #c0c0c0;
+  padding: 8px;
+}
+.highlight:hover {
+  background-color: #e0e0e0;
+}
+.yourVote {
+  background-color: #e0ffe0;
+}

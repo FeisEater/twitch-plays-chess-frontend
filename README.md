@@ -35,3 +35,6 @@ Frontend module of the referendum based public chess app. Implemented in Angular
 
 **1,5h** Front-end up to date with back end. Some moves ask player for additional information.
 
+## 25.8
+
+**3,5h** Made front-end more presentable, deny illegal moves, assign players side, show pending votes

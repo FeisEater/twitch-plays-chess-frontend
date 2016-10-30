@@ -1,7 +1,7 @@
 # Twitch plays chess, frontend [![Build Status](https://travis-ci.org/FeisEater/twitch-plays-chess-frontend.svg?branch=master)](https://travis-ci.org/FeisEater/twitch-plays-chess-frontend) [![Coverage Status](https://coveralls.io/repos/github/FeisEater/twitch-plays-chess-frontend/badge.svg?branch=master)](https://coveralls.io/github/FeisEater/twitch-plays-chess-frontend?branch=master)
 Frontend module of the referendum based public chess app. Implemented in AngularJS.
 
-[App deployed here](http://46.101.249.163)
+[App deployed here](http://twitch-plays-chess.herokuapp.com)
 
 # Hour log
 
